@@ -34,11 +34,16 @@ The recorded acquisition contains **485 measurements over 97.02 seconds**.
 > ADC counts are raw digitized readings, not measurements in lux. No optical calibration has been established.
 
 ## Data and report
-The acquisition CSVs, PNG graph and Technical Report 10 were produced on 17 October 2026. Their publication is pending binary-file upload to this repository.
+The two original CSV acquisitions, a reproducible SVG visualization generated from the first CSV, and the Technical Report 10 LaTeX source are published here. The original PNG and the compiled PDF are still pending binary upload.
 
-- Report 09 (ultrasonics): [existing PDF](../../../docs/relatorios/Relatorio_09_Validacao_Comparativa_do_Sistema_Ultrassonico.pdf)
-- Report 10 (optical recovery and acquisition): prepared locally; PDF/LaTeX upload pending
-- PASCO Studio V0.1: Python source prepared locally; upload pending
+- [First acquisition CSV](data/pasco_optica_20261017_193929.csv)
+- [Second acquisition CSV](data/pasco_optica_20261017_194004.csv)
+- [Optical acquisition chart (SVG)](figures/aquisicao_optica.svg)
+- [Technical Report 09 (ultrasonics, PDF)](../../../docs/relatorios/Relatorio_09_Validacao_Comparativa_do_Sistema_Ultrassonico.pdf)
+- [Technical Report 10 (LaTeX source)](../../../docs/relatorios/relatorio_10_pasco_optica.tex)
+- [PASCO Studio V0.1 (Python)](../../../software/acquisition/pasco_studio_v01.py)
+
+![Optical acquisition, A1 and A2](figures/aquisicao_optica.svg)
 
 ## Next steps
 1. Diagnose the A1 channel (wiring, power, sensor output, ADC saturation).
