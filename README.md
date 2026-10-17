@@ -118,7 +118,11 @@ The optical acquisition subsystem was reconnected and tested. The **A2** channel
 - [Arduino optical diagnostic firmware](firmware/diagnostics/optical_a1_a2/optical_a1_a2.ino)
 - [Ultrasonic Technical Report 09](docs/relatorios/Relatorio_09_Validacao_Comparativa_do_Sistema_Ultrassonico.pdf)
 
-**Pending publication:** PASCO Studio V0.1 source, optical CSV/PNG records, and Technical Report 10 (PDF/LaTeX).
+- [PASCO Studio V0.1 Python application](software/acquisition/pasco_studio_v01.py)
+- [Optical acquisition CSVs and SVG graph](experiments/optical/2026-10-17/README.md#data-and-report)
+- [Technical Report 10 LaTeX source](docs/relatorios/relatorio_10_pasco_optica.tex)
+
+**Pending binary upload:** original optical PNG and compiled Report 10 PDF.
 
 ### Next development stage
 
