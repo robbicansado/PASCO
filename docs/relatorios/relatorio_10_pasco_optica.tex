@@ -1,0 +1,203 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{listings}
+\geometry{top=2.1cm,bottom=2.1cm,left=1.75cm,right=1.75cm,columnsep=0.7cm,headheight=29pt}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0.15em}
+\setlength{\columnsep}{0.7cm}
+\sisetup{output-decimal-marker={,}}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue!50!black}
+\titleformat{\section}{\normalfont\bfseries\normalsize}{\thesection.}{0.4em}{}
+\titleformat{\subsection}{\normalfont\bfseries\small}{\thesubsection}{0.4em}{}
+\captionsetup{font=footnotesize,labelfont=bf}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize Projeto PASCO / FlexDuino}
+\fancyhead[R]{\footnotesize Instituto de F\'isica -- USP}
+\fancyfoot[L]{\footnotesize Relat\'orio T\'ecnico 10}
+\fancyfoot[C]{\footnotesize Robert Nicolas Duarte Bastos}
+\fancyfoot[R]{\footnotesize P\'agina \thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
+\newcommand{\logobox}[2]{%
+\IfFileExists{#1}{\includegraphics[height=1.65cm,keepaspectratio]{#1}}{%
+\fbox{\parbox[c][1.35cm][c]{2.8cm}{\centering\scriptsize #2\\\scriptsize Inserir arquivo\\\texttt{\detokenize{#1}}}}}}
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,frame=single,columns=fullflexible,showstringspaces=false}
+\begin{document}
+\twocolumn[{%
+\begin{center}
+\begin{minipage}{0.22\textwidth}\centering\logobox{logo_usp.png}{Logo USP}\end{minipage}%
+\begin{minipage}{0.55\textwidth}\centering\small\textbf{UNIVERSIDADE DE S\~AO PAULO}\par
+\small INSTITUTO DE F\'ISICA\par
+\footnotesize Projeto PASCO / FlexDuino\end{minipage}%
+\begin{minipage}{0.22\textwidth}\centering\logobox{logo_ifusp.png}{Logo IFUSP}\end{minipage}\par
+\vspace{0.55cm}
+{\large\bfseries Relat\'orio T\'ecnico 10\par}
+\vspace{0.18cm}
+{\Large\bfseries Recupera\c{c}\~ao, Caracteriza\c{c}\~ao e Integra\c{c}\~ao do Sistema de Aquisi\c{c}\~ao \`Optica\par}
+\vspace{0.15cm}
+{\normalsize\bfseries M\'odulo de dois canais anal\'ogicos, resposta luminosa e PASCO Studio V0.1\par}
+\vspace{0.35cm}
+{\footnotesize Projeto: Desenvolvimento de um Sistema Alternativo ao PASCO (FlexDuino)\par}
+{\footnotesize Autor: Robert Nicolas Duarte Bastos -- N\textsuperscript{o} USP 15641639\par}
+{\footnotesize Orientadores: Prof. Alexandre Alarcon do Passo Suaide e Profa. Kaline R. S. Coutinho\par}
+{\footnotesize Data: 17 de outubro de 2026\par}
+\end{center}
+\vspace{0.5cm}
+}]
+
+\section*{Resumo}
+Este relat\'orio apresenta a investiga\c{c}\~ao e a retomada da aquisi\c{c}\~ao \`optica na central PASCO/FlexDuino. A inspe\c{c}\~ao do m\'odulo de dois canais permitiu reconstruir, por rastreamento visual, as conex\~oes entre as placas internas, o conector DB15 e as entradas anal\'ogicas do Arduino. Um firmware provis\'orio transmitiu leituras dos canais A1 e A2 pela porta serial. O canal A2 apresentou resposta consistente \`a ilumina\c{c}\~ao ambiente e ao flash de um telefone, com valores menores de ADC sob ilumina\c{c}\~ao mais intensa, al\'em de depend\^encia angular preliminar. O canal A1 permaneceu predominantemente pr\'oximo ao limite superior do conversor, sem resposta luminosa identific\'avel. Foi implementado o PASCO Studio V0.1 em Python, com visualiza\c{c}\~ao temporal e exporta\c{c}\~ao de dados. Um registro experimental cont\'em 485 amostras em 97,02 s, com A2 entre 26 e 969 contagens ADC. O canal A2 \`e considerado funcional nas condi\c{c}\~oes ensaiadas; a valida\c{c}\~ao integral do m\'odulo e a calibra\c{c}\~ao fotom\'etrica permanecem pendentes.
+
+\noindent\textbf{Palavras-chave:} PASCO; FlexDuino; aquisi\c{c}\~ao \`optica; Arduino; sensores anal\'ogicos; Python.
+
+\section{Contexto e objetivos}
+Ap\'os a recupera\c{c}\~ao da aquisi\c{c}\~ao de temperatura e a investiga\c{c}\~ao do subsistema ultrass\^onico, descritas nos Relat\'orios T\'ecnicos 07 e 08, a etapa seguinte concentrou-se no m\'odulo \`optico. Os objetivos foram: (i) identificar a liga\c{c}\~ao el\'etrica dos canais; (ii) obter leituras anal\'ogicas reproduz\'iveis; (iii) caracterizar qualitativamente a resposta \`a ilumina\c{c}\~ao e \`a dire\c{c}\~ao da fonte; e (iv) integrar a aquisi\c{c}\~ao a uma interface computacional extens\'ivel.
+
+\section{Inspe\c{c}\~ao e mapeamento do m\'odulo}
+O conjunto investigado consiste em uma caixa com conector DB15 e duas placas internas. A placa vermelha possui uma sa\'ida identificada como \texttt{A0}; a placa azul possui terminais \texttt{AO}, \texttt{DO}, \texttt{GND} e \texttt{VCC}, al\'em de potenci\^ometro. A inspe\c{c}\~ao associou o canal azul a um elemento fotossens\'ivel, possivelmente um LDR. A identifica\c{c}\~ao definitiva de cada componente exige inspe\c{c}\~ao adicional.
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Mapeamento reconstru\'ido por inspe\c{c}\~ao visual.}
+\begin{tabular}{@{}p{0.36\columnwidth}p{0.25\columnwidth}p{0.24\columnwidth}@{}}
+\toprule
+Origem no m\'odulo & DB15 & Arduino \\
+\midrule
+Placa vermelha, \texttt{A0} & pino 2 & A1 \\
+Placa azul, \texttt{AO} & pino 3 & A2 \\
+Alimenta\c{c}\~ao comum & pino 9 & 5 V \\
+Refer\^encia comum & pino 15 & GND \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Os pinos 9 e 15 foram associados a barramentos separados na placa intermedi\'aria da central. O percurso foi reconstru\'ido visualmente, n\~ao equivalendo a uma verifica\c{c}\~ao completa de continuidade el\'etrica. A nomenclatura \texttt{A0} na placa vermelha refere-se ao terminal da placa, n\~ao \`a entrada A0 do Arduino.
+
+\section{Firmware provis\'orio e protocolo serial}
+Para isolar a aquisi\c{c}\~ao \`optica, foi carregado um sketch de diagn\'ostico que executa \texttt{analogRead(A1)} e \texttt{analogRead(A2)} e transmite, a 9600 baud, mensagens como:
+\begin{lstlisting}
+PASCO | AQUISICAO OPTICA
+A1=1021;A2=917
+\end{lstlisting}
+O per\'iodo nominal entre transmiss\~oes foi definido em 200 ms. As leituras representam contagens de um conversor de 10 bits, na faixa de 0 a 1023, e n\~ao medidas calibradas em lux. O firmware FlexDuino V5 foi preservado como refer\^encia de recupera\c{c}\~ao, mas n\~ao foi utilizado na aquisi\c{c}\~ao \`optica aqui documentada.
+
+\section{Ensaios de resposta \`a luz}
+\subsection{Ilumina\c{c}\~ao ambiente e flash}
+Com o canal A2, observaram-se leituras pr\'oximas de 994 ADC no quarto com a luz apagada e valores estabilizados aproximadamente entre 921 e 927 ADC com a ilumina\c{c}\~ao do quarto ligada. Ciclos de acendimento e apagamento produziram varia\c{c}\~oes revers\'iveis, sem necessidade de movimentar a caixa. Com o flash de um telefone alinhado ao sensor, registraram-se valores significativamente menores, chegando \`a ordem de dezenas de contagens ADC.
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Condi\c{c}\~oes representativas dos testes manuais.}
+\begin{tabular}{@{}p{0.65\columnwidth}r@{}}
+\toprule
+Condi\c{c}\~ao & A2 (ADC) \\
+\midrule
+Quarto com luz apagada & $\sim 994$ \\
+Quarto com luz acesa & $921$--$927$ \\
+Flash frontal a 20 cm & $120$--$130$ \\
+Flash frontal a 15--18 cm & $\sim 120$ \\
+Flash frontal a 30 cm & $\sim 220$ \\
+Sem flash, luz ambiente & $\sim 900$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Essas observa\c{c}\~oes ocorreram em sequ\^encias experimentais distintas, sem controle fotom\'etrico absoluto. Os valores devem ser tratados como indicativos, n\~ao como curva de calibra\c{c}\~ao. A redu\c{c}\~ao de ADC sob ilumina\c{c}\~ao intensa \`e compat\'ivel com a resposta el\'etrica do conjunto sensor--circuito, sem identificar isoladamente sua fun\c{c}\~ao de transfer\^encia.
+
+\subsection{Depend\^encia angular preliminar}
+Em ensaio manual com dist\^ancia aproximada de 20 cm, obtiveram-se leituras aproximadamente sim\'etricas em rela\c{c}\~ao ao eixo frontal.
+\begin{table}[H]
+\centering\footnotesize
+\caption{Resposta angular preliminar do canal A2.}
+\begin{tabular}{@{}rr@{}}
+\toprule
+\^Angulo & A2 (ADC) \\
+\midrule
+$-60^\circ$ & 900 \\
+$-45^\circ$ & 670 \\
+$0^\circ$ & 120--130 \\
+$+45^\circ$ & 670 \\
+$+60^\circ$ & 900 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A leitura pr\'oxima de 900 ADC em $\pm60^\circ$ corresponde aproximadamente \`a condi\c{c}\~ao de luz ambiente observada em outro teste. Isso sugere que a contribui\c{c}\~ao adicional do flash se tornou pequena nessas condi\c{c}\~oes. N\~ao se pode inferir um \^angulo de corte r\'igido: a resposta pode combinar geometria da caixa, orienta\c{c}\~ao do elemento e distribui\c{c}\~ao angular da fonte.
+
+\section{Aquisi\c{c}\~ao computacional: PASCO Studio V0.1}
+A interface PASCO Studio V0.1 foi implementada em Python, utilizando \texttt{pyserial}, \texttt{Tkinter} e \texttt{Matplotlib}. A vers\~ao inicial permite selecionar o m\'odulo \`optico ou o protocolo de temperatura METEO, escolher a porta serial, acompanhar o gr\'afico temporal, visualizar os canais e exportar dados CSV e imagem PNG. A sele\c{c}\~ao de temperatura na interface n\~ao demonstra, por si s\'o, valida\c{c}\~ao da altern\^ancia autom\'atica de firmware na central.
+
+O registro CSV enviado, \texttt{pasco\_optica\_20261017\_193929.csv}, apresenta os campos \texttt{tempo\_s}, \texttt{A1\_ADC}, \texttt{A2\_ADC} e \texttt{delta\_A2\_ADC}. Os dois CSVs recebidos para esta etapa possuem conte\'udo id\^entico.
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Estat\'isticas do registro CSV de aquisi\c{c}\~ao.}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Grandeza & Resultado \\
+\midrule
+N\'umero de amostras & 485 \\
+Dura\c{c}\~ao registrada & 97,02 s \\
+A1 m\'inimo / m\'aximo & 1004 / 1023 \\
+A1 mediana & 1020 \\
+A2 m\'inimo / m\'aximo & 26 / 969 \\
+Amplitude de A2 & 943 ADC \\
+A2 mediana & 872 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\IfFileExists{grafico_optica.png}{\includegraphics[width=\columnwidth]{grafico_optica.png}}{\fbox{\parbox[c][4.0cm][c]{0.88\columnwidth}{\centering\footnotesize Espa\c{c}o reservado para o gr\'afico PNG exportado pelo PASCO Studio.\\[0.4em]\texttt{grafico\_optica.png}}}}
+\caption{Aquisi\c{c}\~ao \`optica em tempo real. Inserir a imagem PNG do experimento no projeto Overleaf.}
+\end{figure}
+
+\section{Limita\c{c}\~oes e pend\^encias}
+O canal A1 permaneceu predominantemente pr\'oximo de 1020 ADC e n\~ao apresentou resposta luminosa identific\'avel nos testes realizados. Isso n\~ao basta para diagnosticar defeito f\'isico da placa vermelha. Tamb\'em foi relatada uma condi\c{c}\~ao inicial em que A2 parecia saturado e passou a responder ap\'os a abertura e o fechamento da caixa. A causa dessa ocorr\^encia n\~ao foi determinada. N\~ao h\'a registro conclusivo dispon\'ivel sobre a resposta de A2 ap\'os reinicializa\c{c}\~ao sem movimenta\c{c}\~ao do conjunto.
+
+Permanecem necess\'arios: teste de continuidade e alimenta\c{c}\~ao; caracteriza\c{c}\~ao independente da placa vermelha; ensaios angulares com controle geom\'etrico; calibra\c{c}\~ao luminosa com refer\^encia externa; e eventual integra\c{c}\~ao do protocolo \`optico a um firmware unificado derivado da arquitetura FlexDuino V5.
+
+\section{Pr\'oximas etapas e plano de continuidade}
+A continuidade do desenvolvimento ser\'a organizada em etapas incrementais, preservando os arquivos de firmware, os programas Python e os dados experimentais desta vers\~ao como refer\^encia para compara\c{c}\~ao.
+
+\subsection{Prioridade 1: estabilidade e diagn\'ostico \`optico}
+Repetir o ensaio de inicializa\c{c}\~ao de A2 ap\'os desconectar e reconectar a alimenta\c{c}\~ao, sem abrir ou deslocar a caixa; documentar o resultado em v\'arias repeti\c{c}\~oes. Inspecionar conex\~oes, alimenta\c{c}\~ao e continuidade do percurso do canal A1, comparando seu comportamento com o de A2. O crit\'erio de conclus\~ao desta etapa ser\'a a caracteriza\c{c}\~ao da estabilidade de A2 e a identifica\c{c}\~ao de uma causa prov\'avel para a aus\^encia de resposta de A1, sem presumir antecipadamente defeito no sensor.
+
+\subsection{Prioridade 2: aquisi\c{c}\~ao reprodut\'ivel}
+Executar s\'eries temporais com sequ\^encias controladas de luz apagada, luz ambiente e fonte direcional, registrando dist\^ancia, orienta\c{c}\~ao e condi\c{c}\~oes de ilumina\c{c}\~ao. Repetir as medidas angulares com suporte geom\'etrico fixo. Verificar integridade de timestamps, cabe\c{c}alhos e exporta\c{c}\~ao CSV/PNG. O resultado esperado \`e um conjunto de dados compar\'avel entre sess\~oes, ainda expresso em ADC e sem atribui\c{c}\~ao de lux.
+
+\subsection{Prioridade 3: evolu\c{c}\~ao do PASCO Studio}
+Consolidar a interface em m\'odulos independentes de aquisi\c{c}\~ao \`optica e de temperatura, reaproveitando as rotinas previamente validadas do METEO V10. Implementar tabela de medi\c{c}\~oes consult\'avel na interface, controles claros de in\'icio, pausa e encerramento, tratamento de perda de comunica\c{c}\~ao e identifica\c{c}\~ao do m\'odulo ativo. Testar separadamente cada protocolo antes de afirmar a integra\c{c}\~ao operacional entre m\'odulos.
+
+\subsection{Prioridade 4: integra\c{c}\~ao e calibra\c{c}\~ao}
+Ap\'os estabilizar a aquisi\c{c}\~ao, planejar firmware unificado para a central FlexDuino, tomando a vers\~ao V5 preservada como refer\^encia e mantendo possibilidade de retorno ao diagn\'ostico atual. A calibra\c{c}\~ao fotom\'etrica depender\'a de fonte ou instrumento de refer\^encia e dever\'a ser tratada em relat\'orio pr\'oprio. A incorpora\c{c}\~ao de outros sensores, inclusive ultrass\^onico, ocorrer\'a somente ap\'os verifica\c{c}\~ao de compatibilidade el\'etrica e de protocolo.
+
+\noindent\textbf{Entreg\'aveis da pr\'oxima etapa:} registro de reinicializa\c{c}\~ao de A2, diagn\'ostico el\'etrico de A1, aquisi\c{c}\~ao \`optica controlada com CSV/PNG e vers\~ao incremental documentada do PASCO Studio.
+
+\section{Conclus\~ao}
+A etapa recuperou a aquisi\c{c}\~ao \`optica funcional no canal A2 e demonstrou resposta repetida \`a ilumina\c{c}\~ao ambiente e \`a fonte direcional. O desenvolvimento do PASCO Studio V0.1 permitiu observar os sinais em tempo real e registrar os resultados para an\'alise posterior. O canal A1 permanece n\~ao validado e a intermit\^encia inicialmente relatada exige verifica\c{c}\~ao adicional. O conjunto constitui uma base operacional para a continuidade do projeto, sem que isso implique calibra\c{c}\~ao fotom\'etrica ou recupera\c{c}\~ao integral do m\'odulo.
+
+\section*{Documenta\c{c}\~ao de apoio}
+\begin{enumerate}
+\item Projeto PASCO/FlexDuino. \emph{Relat\'orio T\'ecnico 07: Recupera\c{c}\~ao e Valida\c{c}\~ao do Sistema de Aquisi\c{c}\~ao de Temperatura}. 15 ago. 2026.
+\item Projeto PASCO/FlexDuino. \emph{Relat\'orio T\'ecnico 08: Diagn\'ostico e Caracteriza\c{c}\~ao do Sistema Ultrass\^onico}. 21 ago. 2026.
+\item Arquivos do experimento de 17 out. 2026: \texttt{leitor\_meteo\_v10.py}, \texttt{pasco\_studio\_v01.py} e registros CSV/PNG da aquisi\c{c}\~ao \`optica.
+\end{enumerate}
+\end{document}
