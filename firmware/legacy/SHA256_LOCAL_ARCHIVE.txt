@@ -1,0 +1,8 @@
+# SHA-256 of files in original PASCO.zip (17 October 2026)
+# Original file bytes; GitHub text versions may normalize line endings.
+15523ff712b995281d28209bbc9294b55f963f45556d7f776c8d5d5740271eba  flexduino_v5_backup.bin
+a9341ff177c96f76a56c62840ce28e8fa6b7d3697ae4455ee16fd65209b3055e  flexduino_v5_backup.hex
+e30cba2e894ff4d8a622c026ed1664a59cd71263206f200d7186b3157cf12355  flexduino_v5_disassembly.txt
+b2ba166683ea504ab70c1f01d262f1e8d29e2814ffc73d35a1298cf7c1e75e84  leitor_lm35_calibrado_v1.py
+13b16ded14872186891299361b75b75a86ed6b486ced3ffa62190bcad8ca4d2e  ultrassom_ref.ino
+6bc5ebaf780a2de691a554364f83e9c84e69a5e99394bfc45f643b6d600200bf  sketch_aug19b.ino
