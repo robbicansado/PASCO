@@ -130,6 +130,19 @@ Diagnose A1, verify A2 stability after power cycling, validate temperature acqui
 
 ---
 
+
+### Recovered local archive — October 2026
+
+Additional material recovered from the original PASCO working directory is now documented:
+
+- [Ultrasonic Arduino diagnostic sketches](firmware/ultrasonic/README.md) — two sketches with different pin mappings and acquisition purposes.
+- [Preliminary LM35 cross-calibration script](software/temperature/leitor_lm35_calibrado_v1.py) — provisional equation; absolute calibration still pending.
+- [FlexDuino V5 firmware archive notes](firmware/legacy/README.md) — original binary/HEX backups retained locally pending exact binary transfer.
+
+Historical serial-reader and METEO V7–V9 versions and selected temperature CSVs are awaiting archival. Existing METEO V10 and optical files remain unchanged.
+
+---
+
 ## Supervisor
 
 (To be added)
