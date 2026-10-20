@@ -144,17 +144,6 @@ Historical serial-reader and METEO V7–V9 versions and selected temperature CSV
 ---
 
 
-### Local working-folder inventory — October 2026
-
-The supplied local PASCO ZIP has been reviewed and organized without deleting or replacing validated sources:
-
-- [Historical serial-reader versions](software/legacy/README.md) — basic reader published; remaining versions inventoried for exact archival.
-- [Temperature CSV inventory](experiments/temperature/2026-08-15/LOCAL_ARCHIVE_INVENTORY.md) — 19 original files reviewed, including empty/incomplete acquisitions.
-- [FlexDuino V5 firmware checksums](firmware/legacy/SHA256_LOCAL_ARCHIVE.txt) — checksum references for local original backups.
-
-**Archive status:** This is an inventory and partial source-code transfer, not a complete mirror of the local PASCO ZIP. Large text disassemblies, firmware binaries, and remaining raw CSVs are still stored in the original local archive.
-
----
 
 ## Supervisor
 
